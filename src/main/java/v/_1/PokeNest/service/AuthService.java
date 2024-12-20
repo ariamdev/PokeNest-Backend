@@ -1,8 +1,8 @@
 package v._1.PokeNest.service;
 
-import v._1.PokeNest.dao.request.LoginRequest;
-import v._1.PokeNest.dao.request.RegisterRequest;
-import v._1.PokeNest.dao.response.JwtAuthenticationResponse;
+import v._1.PokeNest.dto.request.LoginRequest;
+import v._1.PokeNest.dto.request.RegisterRequest;
+import v._1.PokeNest.dto.response.JwtAuthenticationResponse;
 
 public interface AuthService {
     JwtAuthenticationResponse login(LoginRequest request);

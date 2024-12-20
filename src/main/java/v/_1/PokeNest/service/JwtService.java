@@ -2,6 +2,7 @@ package v._1.PokeNest.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 public interface JwtService {
     String getUsernameFromToken(String token);
     String getToken(UserDetails user);

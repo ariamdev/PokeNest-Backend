@@ -6,15 +6,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import v._1.PokeNest.dao.response.JwtAuthenticationResponse;
-import v._1.PokeNest.dao.request.LoginRequest;
-import v._1.PokeNest.dao.request.RegisterRequest;
-import v._1.PokeNest.entities.Role;
-import v._1.PokeNest.entities.User;
+import v._1.PokeNest.dto.response.JwtAuthenticationResponse;
+import v._1.PokeNest.dto.request.LoginRequest;
+import v._1.PokeNest.dto.request.RegisterRequest;
+import v._1.PokeNest.model.enums.Role;
+import v._1.PokeNest.model.User;
 import v._1.PokeNest.exception.custom.ExistingEmailException;
 import v._1.PokeNest.exception.custom.ExistingUsernameException;
 import v._1.PokeNest.repository.UserRepository;
 import v._1.PokeNest.service.AuthService;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +35,11 @@ public class AuthServiceImpl implements AuthService {
         return JwtAuthenticationResponse.builder()
                 .token(token)
                 .build();
-
     }
 
     @Override
     public JwtAuthenticationResponse register(RegisterRequest request) {
 
-        //Verificaciones username y email
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ExistingUsernameException("El user " + request.getUsername() + " ya existe. " +
                     "Por favor, escoja otro nombre de usuario.");
@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .role(Role.USER)
+                .pets(new ArrayList<>()) //Inicializa lista de pets
                 .build();
 
         userRepository.save(user);

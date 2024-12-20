@@ -1,4 +1,4 @@
-package v._1.PokeNest.dao.response;
+package v._1.PokeNest.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtAuthenticationResponse {
-    private String token;
+public class LoginRequest {
+    private String username;
+    private String password;
 }

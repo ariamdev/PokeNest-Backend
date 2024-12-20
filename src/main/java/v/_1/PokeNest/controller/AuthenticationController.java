@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import v._1.PokeNest.service.impl.AuthServiceImpl;
-import v._1.PokeNest.dao.response.JwtAuthenticationResponse;
-import v._1.PokeNest.dao.request.LoginRequest;
-import v._1.PokeNest.dao.request.RegisterRequest;
+import v._1.PokeNest.dto.response.JwtAuthenticationResponse;
+import v._1.PokeNest.dto.request.LoginRequest;
+import v._1.PokeNest.dto.request.RegisterRequest;
 
 @RestController
 @RequestMapping("/auth")

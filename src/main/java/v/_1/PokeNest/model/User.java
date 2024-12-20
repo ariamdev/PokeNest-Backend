@@ -1,4 +1,4 @@
-package v._1.PokeNest.entities;
+package v._1.PokeNest.model;
 
 
 import jakarta.persistence.*;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import v._1.PokeNest.model.enums.Role;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +33,10 @@ public class User implements UserDetails {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pet> pets; // Relación uno a muchos con Pet
+
 
     @Override
     public String getUsername() {

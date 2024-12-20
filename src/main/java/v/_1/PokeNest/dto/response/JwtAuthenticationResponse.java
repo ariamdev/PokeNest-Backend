@@ -1,4 +1,4 @@
-package v._1.PokeNest.dao.request;
+package v._1.PokeNest.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
-    private String username;
-    private String password;
-    private String email;
+public class JwtAuthenticationResponse {
+    private String token;
 }

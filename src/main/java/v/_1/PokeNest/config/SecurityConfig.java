@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import v._1.PokeNest.model.enums.Role;
 import v._1.PokeNest.service.impl.JwtServiceImpl;
 
 @Configuration
@@ -30,6 +31,8 @@ public class SecurityConfig {
                         authRequest
                                 //.requestMatchers("/admin/**").hasRole("ADMIN") ->Solo para acceder el admin
                                 // .requestMatchers("/user/**").hasRole("USER") -> Solo para acceder como user
+                                //Pueden acceder solo si tienen el rol de User o Amin.
+                                .requestMatchers("/pokenest/**").hasAnyAuthority("ADMIN","USER")
                                 .requestMatchers("/auth/**").permitAll()
                                 .anyRequest().authenticated()
                 )
