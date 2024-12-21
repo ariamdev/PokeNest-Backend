@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import v._1.PokeNest.model.enums.Location;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Data

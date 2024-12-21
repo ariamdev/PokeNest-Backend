@@ -41,12 +41,12 @@ public class AuthServiceImpl implements AuthService {
     public JwtAuthenticationResponse register(RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ExistingUsernameException("El user " + request.getUsername() + " ya existe. " +
-                    "Por favor, escoja otro nombre de usuario.");
+            throw new ExistingUsernameException("The user " + request.getUsername() + " already exists. " +
+                    "Please, select another username.");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ExistingEmailException("El email '" + request.getEmail() + " ya está registrado en el sistema.");
+            throw new ExistingEmailException("The email" + request.getEmail() + " is already restered in the system.");
         }
 
         User user = User.builder()

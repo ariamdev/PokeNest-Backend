@@ -1,6 +1,7 @@
 package v._1.PokeNest.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import v._1.PokeNest.dto.request.PetRequestDTO;
 import v._1.PokeNest.dto.response.PetResponseDTO;
@@ -10,14 +11,18 @@ import v._1.PokeNest.model.Pet;
 import v._1.PokeNest.model.Species;
 import v._1.PokeNest.model.Type;
 import v._1.PokeNest.model.User;
+import v._1.PokeNest.model.enums.Location;
 import v._1.PokeNest.repository.PetRepository;
 import v._1.PokeNest.repository.SpeciesRepository;
 import v._1.PokeNest.repository.TypeRepository;
 import v._1.PokeNest.repository.UserRepository;
 import v._1.PokeNest.service.PetService;
 
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,48 +34,70 @@ public class PetServiceImpl implements PetService {
     private final TypeRepository typeRepository;
     private final UserRepository userRepository;
 
+    private static final Map<String, Location> DEFAULT_LOCATIONS = new HashMap<>();
+
+    static {
+        DEFAULT_LOCATIONS.put("Bulbasaur", Location.FOREST);
+        DEFAULT_LOCATIONS.put("Charmander", Location.CAVE);
+        DEFAULT_LOCATIONS.put("Squirtle", Location.LAKE);
+        DEFAULT_LOCATIONS.put("Eevee", Location.FOREST);
+        DEFAULT_LOCATIONS.put("Vaporeon", Location.BEACH);
+        DEFAULT_LOCATIONS.put("Jolteon", Location.CAVE);
+        DEFAULT_LOCATIONS.put("Flareon", Location.CAVE);
+        DEFAULT_LOCATIONS.put("Espeon", Location.FOREST);
+        DEFAULT_LOCATIONS.put("Umbreon", Location.CAVE);
+        DEFAULT_LOCATIONS.put("Leafeon", Location.FOREST);
+        DEFAULT_LOCATIONS.put("Glaceon", Location.SNOW);
+        DEFAULT_LOCATIONS.put("Sylveon", Location.FOREST);
+    }
+
+
     @Override
     public PetResponseDTO createPet(PetRequestDTO petRequestDTO) {
 
-        // Buscar el usuario
-        User user = userRepository.findById(petRequestDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con ID: " + petRequestDTO.getUserId()));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // Buscar la especie
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+
+
         Species species = speciesRepository.findBySpecieName(petRequestDTO.getSpeciesName())
-                .orElseThrow(() -> new IllegalArgumentException("No se ha encontrado la especie de pokemon."));
+                .orElseThrow(() -> new IllegalArgumentException("Unable to find a specie of pokemon."));
 
-        // Buscar los tipos
+
         List<Type> types = typeRepository.findByNameIn(petRequestDTO.getTypeNames());
         if (types.isEmpty()) {
-            throw new IllegalArgumentException("No se han encontrado los tipos de pokemon.");
+            throw new IllegalArgumentException("We couldn't find a type of pokemon");
         }
 
-        // Validar alias duplicado para el mismo usuario
+
         if (user.getPets().stream().anyMatch(p -> p.getAlias().equalsIgnoreCase(petRequestDTO.getAlias()))) {
-            throw new PetNameExistException("El alias '" + petRequestDTO.getAlias() +
-                    " ya existe, porfavor, escriba uno nuevo.");
+            throw new PetNameExistException("The alias '" + petRequestDTO.getAlias() + " is already in use.");
         }
 
-        // Crear el Pet
+        //En el constructor tenemos que asignar el Location a cada uno de los que creemos por defecto.
+        //En caso de que no se le asigne por cualquier cosa, se le pondrá un Bosque.
+        Location defaultLocation = DEFAULT_LOCATIONS.getOrDefault(species.getSpecieName(), Location.FOREST);
+
         Pet pet = Pet.builder()
                 .alias(petRequestDTO.getAlias())
                 .user(user)
                 .species(species)
                 .types(new HashSet<>(types))
-                .lvl(1) // Valores iniciales por defecto
+                .lvl(1)
                 .experience(0)
                 .happiness(70)
                 .ph(100)
+                .location(defaultLocation)
                 .build();
 
-        // Agregar el Pet a la lista del User
+        // Agregar la mascota al usuario
         user.getPets().add(pet);
 
-        // Guardar el User (esto guarda automáticamente el Pet si cascade = CascadeType.ALL está configurado)
+        // Guardar el usuario (y por cascada, la mascota)
         userRepository.save(user);
 
-        // Devolver el Pet como ResponseDTO
+        // Construir el DTO de respuesta
         return PetResponseDTO.builder()
                 .id(pet.getId())
                 .alias(pet.getAlias())
@@ -80,6 +107,7 @@ public class PetServiceImpl implements PetService {
                 .experience(pet.getExperience())
                 .happiness(pet.getHappiness())
                 .ph(pet.getPh())
+                .location(pet.getLocation().name()) // Usar el nombre del enum como respuesta
                 .build();
     }
 }

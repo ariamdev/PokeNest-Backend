@@ -4,7 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,53 +29,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtServiceImpl jwtServiceImpl;
     private final UserDetailsService userDetailsService;
 
-    //Método que va a hacer todos los filtros para los TOKENS
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-
-        final String token = getTokenFromRequest(request);
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
         final String username;
 
-        if (token==null){
-            filterChain.doFilter(request,response);
+        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWithIgnoreCase(authHeader, "Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        //Si todo va bien accede al username del token
-        username= jwtServiceImpl.getUsernameFromToken(token);
+        jwt = authHeader.substring(7);
+        username = jwtServiceImpl.extractUserName(jwt); // Extraer el username del token
 
-        //Si no obtenemos el nombre del securityContextHolder lo va a buscar a la BDD
-        if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
+        if (StringUtils.hasText(username)
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username); // Cargar el usuario por username
 
-            UserDetails userDetails=userDetailsService.loadUserByUsername(username);
-
-            //Validar si el token es valido
-            if (jwtServiceImpl.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-
+            if (jwtServiceImpl.isTokenValid(jwt, userDetails)) {
+                SecurityContext context = SecurityContextHolder.getContext();
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                context.setAuthentication(authToken);
+                SecurityContextHolder.setContext(context);
             }
         }
 
-        //Comprobación del método - BORRAR PASADAS LAS PRUEBAS
-        System.out.println("Token JWT encontrado: " + token);
-
-        filterChain.doFilter(request,response);
-    }
-
-    //Obtener token a través de un request
-    private String getTokenFromRequest(HttpServletRequest request){
-        final String authHeader= request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
-            return authHeader.substring(7); // Extrae el token sin "Bearer "
-        }
-        return null;
+        filterChain.doFilter(request, response);
     }
 }

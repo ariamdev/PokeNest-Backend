@@ -46,6 +46,19 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    // Extraer todas las Claims del JWT
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    @Override
+    public String extractUserName(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
     @Override
     public String getUsernameFromToken(String token) {
         return getClaim(token, Claims::getSubject);
