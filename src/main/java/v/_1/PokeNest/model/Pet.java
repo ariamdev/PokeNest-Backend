@@ -24,11 +24,11 @@ public class Pet {
     private String alias;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Clave foránea hacia User
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "species_id", nullable = false) // Clave foránea hacia Species
+    @JoinColumn(name = "species_id", nullable = false)
     private Species species;
 
     @Column(nullable = false)

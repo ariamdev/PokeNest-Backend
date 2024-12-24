@@ -13,6 +13,7 @@ import v._1.PokeNest.model.enums.Role;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Builder
@@ -37,6 +38,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets; // Relación uno a muchos con Pet
 
+    public Optional<Pet> retrievePetByAlias(String petName) {
+        return pets.stream()
+                .filter(pet -> pet.getAlias().equalsIgnoreCase(petName))
+                .findFirst();
+    }
 
     @Override
     public String getUsername() {
