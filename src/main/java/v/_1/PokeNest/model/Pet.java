@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import v._1.PokeNest.model.enums.Location;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -54,4 +55,11 @@ public class Pet {
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
     private Set<Type> types;
+
+    @Column(name = "is_sleeping", nullable = false)
+    private boolean isSleeping = false;
+
+    @Column(name = "sleep_end_time")
+    private LocalDateTime sleepEndTime;
+
 }

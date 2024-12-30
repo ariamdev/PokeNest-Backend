@@ -6,5 +6,7 @@ public enum Location {
     LAKE,
     BEACH,
     SNOW,
-    POKECENTER
+    POKECENTER,
+    NOLIGHT,
+    EXPLORE
 }

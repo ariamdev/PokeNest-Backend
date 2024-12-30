@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PetFindRequestDTO {
-    private String alias;
+    private int id;
 }

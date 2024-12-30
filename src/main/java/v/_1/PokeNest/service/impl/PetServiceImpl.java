@@ -22,8 +22,8 @@ import v._1.PokeNest.repository.TypeRepository;
 import v._1.PokeNest.repository.UserRepository;
 import v._1.PokeNest.service.PetService;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +35,7 @@ public class PetServiceImpl implements PetService {
     private final TypeRepository typeRepository;
     private final UserRepository userRepository;
     private final DefaultLocationService defaultLocationService;
+    private final DefaultTypeService defaultTypeService;
 
 
     @Override
@@ -47,10 +48,10 @@ public class PetServiceImpl implements PetService {
         Species species = speciesRepository.findBySpecieName(petRequestDTO.getSpeciesName())
                 .orElseThrow(() -> new IllegalArgumentException("Unable to find a specie of pokemon."));
 
-        List<Type> types = typeRepository.findByNameIn(petRequestDTO.getTypeNames());
-        if (types.isEmpty()) {
-            throw new IllegalArgumentException("We couldn't find a type of pokemon");
-        }
+        Set<Type> defaultTypes = defaultTypeService.getDefaultTypesForSpecies(species.getSpecieName()).stream()
+                .map(typeName -> typeRepository.findByName(typeName)
+                        .orElseThrow(() -> new IllegalArgumentException("Type not found: " + typeName)))
+                .collect(Collectors.toSet());
 
         if (user.getPets().stream().anyMatch(p -> p.getAlias().equalsIgnoreCase(petRequestDTO.getAlias()))) {
             throw new PetNameExistException("The alias '" + petRequestDTO.getAlias() + " is already in use.");
@@ -58,7 +59,7 @@ public class PetServiceImpl implements PetService {
 
         Location defaultLocation = defaultLocationService.getDefaultLocationForSpecies(species.getSpecieName());
 
-        Pet pet = buildPet(petRequestDTO, user, species, types, defaultLocation);
+        Pet pet = buildPet(petRequestDTO, user, species, defaultTypes, defaultLocation);
 
         user.getPets().add(pet);
         userRepository.save(user);
@@ -66,12 +67,12 @@ public class PetServiceImpl implements PetService {
         return buildPetResponseDTO(pet);
     }
 
-    private Pet buildPet(PetRequestDTO petRequestDTO, User user, Species species, List<Type> types, Location defaultLocation) {
+    private Pet buildPet(PetRequestDTO petRequestDTO, User user, Species species, Set<Type> types, Location defaultLocation) {
         return Pet.builder()
                 .alias(petRequestDTO.getAlias())
                 .user(user)
                 .species(species)
-                .types(new HashSet<>(types))
+                .types(types)
                 .lvl(1)
                 .experience(0)
                 .happiness(70)
@@ -96,13 +97,8 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public void deletePet(PetFindRequestDTO petFindRequestDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Pet pet = petRepository.findByAlias(petFindRequestDTO.getAlias())
-                .orElseThrow(() -> new PetNotFoundException("Pet not found: " + petFindRequestDTO.getAlias()));
+        Pet pet = verifyOwner(petFindRequestDTO.getId());
 
-        if (!pet.getUser().getUsername().equals(username) && !isAdmin(username)) {
-            throw new SecurityException("Unauthorized to delete this pet.");
-        }
         petRepository.delete(pet);
     }
 
@@ -114,13 +110,7 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public PetResponseDTO getOnePet(PetFindRequestDTO petFindRequestDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Pet pet = petRepository.findByAlias(petFindRequestDTO.getAlias())
-                .orElseThrow(() -> new PetNotFoundException("Pet not found: " + petFindRequestDTO.getAlias()));
-
-        if (!pet.getUser().getUsername().equals(username)) {
-            throw new SecurityException("Unauthorized to access this pet.");
-        }
+        Pet pet = verifyOwner(petFindRequestDTO.getId());
 
         return buildPetResponseDTO(pet);
     }
@@ -163,5 +153,17 @@ public class PetServiceImpl implements PetService {
                 .collect(Collectors.toList());
     }
 
+    private Pet verifyOwner(int id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new PetNotFoundException("Pet not found with ID: " + id));
+
+        if (!pet.getUser().getUsername().equals(username)) {
+            throw new SecurityException("Unauthorized to access this pet.");
+        }
+
+        return pet;
+    }
 
 }
