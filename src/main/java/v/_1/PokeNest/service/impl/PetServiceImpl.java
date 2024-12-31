@@ -122,6 +122,12 @@ public class PetServiceImpl implements PetService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
 
+        List<Pet> pets = user.getPets();
+
+        if (pets.isEmpty()) {
+            throw new PetNotFoundException("No pets found for user: " + username);
+        }
+
         //Si no funciona probar solo con user.getPets();
         return user.getPets().stream().map(this::buildPetResponseDTO)
                 .collect(Collectors.toList());
@@ -134,6 +140,12 @@ public class PetServiceImpl implements PetService {
 
         if (!isAdmin(username)) {
             throw new SecurityException("Unauthorized to access all pets.");
+        }
+
+        List<Pet> pets = petRepository.findAll();
+
+        if (pets.isEmpty()) {
+            throw new PetNotFoundException("No pets found in the system.");
         }
 
         return petRepository.findAll().stream()
