@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import v._1.PokeNest.dto.response.JwtAuthenticationResponse;
 import v._1.PokeNest.dto.request.LoginRequest;
 import v._1.PokeNest.dto.request.RegisterRequest;
+import v._1.PokeNest.exception.custom.UserNotFoundException;
 import v._1.PokeNest.model.enums.Role;
 import v._1.PokeNest.model.User;
 import v._1.PokeNest.exception.custom.ExistingEmailException;
@@ -30,10 +31,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtAuthenticationResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow();
+        UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UserNotFoundException("User not found"));
         String token= jwtServiceImpl.getToken(user);
+
+        String role = "";
+        if (user instanceof User) {
+            User appUser = (User) user; // Cast al modelo User
+            role = appUser.getRole().name(); // Extraer el rol
+        }
+
         return JwtAuthenticationResponse.builder()
                 .token(token)
+                .role(role)
                 .build();
     }
 

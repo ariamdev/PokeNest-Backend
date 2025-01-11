@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class PetRequestDTO {
     private String alias;
-    private String speciesName; // Nombre de la especie, no el ID.
-    private Set<String> typeNames; // Lista de nombres de tipos.
+    private String speciesName;
+    private Set<String> typeNames;
     private int userId;
 }

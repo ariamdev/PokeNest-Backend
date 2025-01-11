@@ -12,7 +12,7 @@ import java.util.List;
 public interface PetService {
     PetResponseDTO createPet(PetRequestDTO petRequestDTO);
     void deletePet(PetFindRequestDTO petFindRequestDTO);
-    PetResponseDTO getOnePet(PetFindRequestDTO petFindRequestDTO);
+    PetResponseDTO getOnePet(int id);
     List<PetResponseDTO> getUserPets();
     List<PetAndUserResponseDTO> getAllPets();
 }

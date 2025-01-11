@@ -14,11 +14,11 @@ import java.util.Set;
 public class PetResponseDTO {
     private int id;
     private String alias;
-    private String species; //Se deja como string para no sobrecargar toda la información (Incluyendo ID)
+    private String species;
     private Set<String> types;
     private int lvl;
     private int experience;
     private int happiness;
     private int ph;
-    private String location; //Se deja como string para no sobrecargar toda la información (Incluyendo ID)
+    private String location;
 }

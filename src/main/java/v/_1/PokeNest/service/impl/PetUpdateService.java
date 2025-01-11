@@ -67,6 +67,9 @@ public class PetUpdateService {
             case EXPLORE:
                 exploreWithPet(pet);
                 break;
+            case HEAL:
+                healPet(pet);
+             break;
             default:
                 throw new IllegalArgumentException("Unknown interaction type: " + petInteraction);
         }
@@ -94,20 +97,9 @@ public class PetUpdateService {
     }
 
     private void verifyPetState(Pet pet) {
-        if (pet.isSleeping() && LocalDateTime.now().isBefore(pet.getSleepEndTime())) {
-            throw new SleepingPetException("The pet is sleeping. Wait until " + pet.getSleepEndTime());
-        }
 
-        if (pet.isSleeping() && LocalDateTime.now().isAfter(pet.getSleepEndTime())) {
-            pet.setSleeping(false);
-            pet.setPh(100);
-            pet.setHappiness(100);
-            pet.setLocation(defaultLocationService.getDefaultLocationForSpecies(pet.getSpecies().getSpecieName()));
-        }
-
-        if (pet.getPh() == 0) {
-            pet.setLocation(Location.POKECENTER);
-            throw new DefeatedPetException("The pet is at 0 PH and has been sent to the Pokémon Center.");
+        if(pet.getPh() <= 40){
+            pet.setHappiness(40);
         }
     }
 
@@ -120,40 +112,19 @@ public class PetUpdateService {
         pet.setTypes(defaultTypes);
     }
 
-    public PetResponseDTO healPet(PetFindRequestDTO petFindRequestDTO) {
-        Pet pet = verifyOwner(petFindRequestDTO.getId());
-
-        if (!Location.POKECENTER.equals(pet.getLocation())) {
-            throw new DefeatedPetException("The pet is not in the Pokémon Center and cannot be healed.");
-        }
-
+    public void healPet(Pet pet) {
         pet.setPh(100);
         pet.setHappiness(100);
-        pet.setLocation(defaultLocationService.getDefaultLocationForSpecies(pet.getSpecies().getSpecieName()));
-        petRepository.save(pet);
-
-        return buildPetResponseDTO(pet);
     }
 
     private void startSleep(Pet pet) {
-        pet.setSleeping(true);
-        pet.setSleepEndTime(LocalDateTime.now().plusMinutes(5));
-        pet.setLocation(Location.NOLIGHT);
-/*
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.schedule(() -> {
-            pet.setSleeping(false);
-            pet.setPh(100);
-            pet.setHappiness(100);
-            pet.setLocation(defaultLocationService.getDefaultLocationForSpecies(pet.getSpecies().getSpecieName()));
-        }, 5, TimeUnit.MINUTES);*/
-
+        pet.setPh(100);
+        pet.setHappiness(100);
     }
 
     private void feedPet(Pet pet) {
-        pet.setPh(Math.min(pet.getPh() + 25, 100)); //Pocion. Version sin inventory
+        pet.setPh(Math.min(pet.getPh() + 25, 100));
         pet.setHappiness(Math.min(pet.getHappiness() + 20, 100));
-        //checkEvolution(pet); -> Añadir cuando se añada inventory para los carameloraro.
     }
 
     private void playWithPet(Pet pet) {
@@ -163,6 +134,7 @@ public class PetUpdateService {
     private void trainPet(Pet pet) {
         pet.setPh(Math.max(pet.getPh() - 25, 0));
         pet.setExperience(Math.min(pet.getExperience() + 25, 100));
+        pet.setHappiness(Math.max(pet.getPh() - 10, 0));
         checkEvolution(pet);
     }
 
@@ -177,26 +149,15 @@ public class PetUpdateService {
         try (ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1)) {
             scheduler.schedule(() -> {
                 pet.setLocation(defaultLocationService.getDefaultLocationForSpecies(pet.getSpecies().getSpecieName()));
-                petRepository.save(pet); // Persistir el cambio de ubicación nuevamente
+                petRepository.save(pet);
             }, 3, TimeUnit.SECONDS);
         }
 
         checkEvolution(pet);
-/*
-         Lógica implementando inventario
-        double random = Math.random();
-        if (random < 0.4) {
-            // Encontrar una poción (aquí se puede implementar más adelante)
-        } else if (random < 0.8) {
-            // Encontrar comida
-        } else {
-            pet.setLvl(pet.getLvl() + 1); // Caramelo raro: Subir nivel automáticamente
-        }*/
-
     }
 
     private void checkEvolution(Pet pet) {
-        if (pet.getLvl() >= 100) return; // Nivel máximo alcanzado.
+        if (pet.getLvl() >= 100) return;
 
         if (pet.getExperience() >= 100) {
             pet.setLvl(pet.getLvl() + 1);

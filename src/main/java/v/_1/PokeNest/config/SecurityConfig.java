@@ -29,9 +29,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                //.requestMatchers("/admin/**").hasRole("ADMIN") ->Solo para acceder el admin
-                                // .requestMatchers("/user/**").hasRole("USER") -> Solo para acceder como user
-                                //Pueden acceder solo si tienen el rol de User o Amin.
                                 .requestMatchers("/pokenest/**").hasAnyAuthority("ADMIN","USER")
                                 .requestMatchers("/auth/**").permitAll()
                                 .anyRequest().authenticated()

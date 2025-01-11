@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pet> pets; // Relación uno a muchos con Pet
+    private List<Pet> pets;
 
     public Optional<Pet> retrievePetByAlias(String petName) {
         return pets.stream()
@@ -54,9 +54,13 @@ public class User implements UserDetails {
         return this.password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name())); //Autoridad que tenga el user (ROL)
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

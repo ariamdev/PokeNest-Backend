@@ -5,5 +5,6 @@ public enum PetInteraction {
     PLAY,
     FEED,
     TRAIN,
-    EXPLORE
+    EXPLORE,
+    HEAL
 }

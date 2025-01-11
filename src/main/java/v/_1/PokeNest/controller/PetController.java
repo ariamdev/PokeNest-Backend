@@ -35,9 +35,9 @@ public class PetController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getOne")
-    public ResponseEntity<PetResponseDTO> getOnePet(@RequestBody PetFindRequestDTO petFindRequestDTO) {
-        PetResponseDTO petResponseDTO = petService.getOnePet(petFindRequestDTO);
+    @GetMapping("/getOne/{id}")
+    public ResponseEntity<PetResponseDTO> getOnePet(@PathVariable int id) {
+        PetResponseDTO petResponseDTO = petService.getOnePet(id);
         return new ResponseEntity<>(petResponseDTO,HttpStatus.OK);
     }
 
@@ -55,11 +55,6 @@ public class PetController {
     public ResponseEntity<PetResponseDTO> updatePet(@RequestBody PetFindRequestDTO petFindRequestDTO,
                                                     @RequestParam PetInteraction petInteraction){
         PetResponseDTO petResponseDTO = petUpdateService.updatePet(petFindRequestDTO, petInteraction);
-        return new ResponseEntity<>(petResponseDTO, HttpStatus.OK);
-    }
-    @PostMapping("/update/heal")
-    public ResponseEntity<PetResponseDTO> healPet(@RequestBody PetFindRequestDTO petFindRequestDTO) {
-        PetResponseDTO petResponseDTO = petUpdateService.healPet(petFindRequestDTO);
         return new ResponseEntity<>(petResponseDTO, HttpStatus.OK);
     }
 

@@ -61,10 +61,13 @@ public class PetServiceImpl implements PetService {
 
         Pet pet = buildPet(petRequestDTO, user, species, defaultTypes, defaultLocation);
 
-        user.getPets().add(pet);
+        Pet savedPet = petRepository.save(pet);
+
+        // Añadir el Pet guardado al usuario
+        user.getPets().add(savedPet);
         userRepository.save(user);
 
-        return buildPetResponseDTO(pet);
+        return buildPetResponseDTO(savedPet);
     }
 
     private Pet buildPet(PetRequestDTO petRequestDTO, User user, Species species, Set<Type> types, Location defaultLocation) {
@@ -109,8 +112,8 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetResponseDTO getOnePet(PetFindRequestDTO petFindRequestDTO) {
-        Pet pet = verifyOwner(petFindRequestDTO.getId());
+    public PetResponseDTO getOnePet(int id) {
+        Pet pet = verifyOwner(id);
 
         return buildPetResponseDTO(pet);
     }
@@ -170,6 +173,13 @@ public class PetServiceImpl implements PetService {
 
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new PetNotFoundException("Pet not found with ID: " + id));
+
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        if (user.getRole().equals(Role.ADMIN)) {
+            return pet;
+        }
 
         if (!pet.getUser().getUsername().equals(username)) {
             throw new SecurityException("Unauthorized to access this pet.");

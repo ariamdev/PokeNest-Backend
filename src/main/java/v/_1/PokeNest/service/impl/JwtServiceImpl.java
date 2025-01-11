@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import v._1.PokeNest.model.User;
 import v._1.PokeNest.service.JwtService;
 
 import java.security.Key;
@@ -31,6 +32,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String,Object> extraClaims, UserDetails user){
+        if (user instanceof User) {
+            User appUser = (User) user; // Cast al modelo User
+            extraClaims.put("role", appUser.getRole().name()); // Incluye el rol como claim
+        }
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
