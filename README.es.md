@@ -54,4 +54,4 @@ de un tamagotchi, pero con el carisma y el universo de Pokémon.
 
 ## ![Trs](https://raw.githubusercontent.com/msikma/pokesprite/master/items-outline/tr/fire.png) Contribución
 
-Si deseas contribuir al proyecto, abre un issue o envía un pull request. Cualquier aporte que ayude a mejorar el codigo o escalabilidad del backend será bienvenido!
+Si quieres contribuir al proyecto, abre un issue o envía un pull request. Cualquier aporte que ayude a mejorar el codigo o escalabilidad del backend será bienvenido!
