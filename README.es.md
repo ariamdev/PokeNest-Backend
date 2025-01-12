@@ -1,4 +1,4 @@
-[![EN](https://img.shields.io/badge/EN-blue.svg?logo=googletranslate&logoColor=white)](#eng)
+[![EN](https://img.shields.io/badge/EN-blue.svg?logo=googletranslate&logoColor=white)](https://github.com/ariamdev/PokeNest-Backend/blob/main/README.md)
 [![ES](https://img.shields.io/badge/ES-red.svg?logo=googletranslate&logoColor=white)](#es)
 
 
