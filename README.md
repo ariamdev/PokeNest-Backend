@@ -12,7 +12,7 @@ where users can take care of their own Pokémon.
 ## ![Egg](https://raw.githubusercontent.com/msikma/pokesprite/master/items-outline/key-item/rule-book.png) Description of the project
 In PokeNest, users can have more than one Pokémon, choosing between the first generation starters and Eevee and its evolutions, 
 as a virtual pet and perform various activities to take care of it and level it up. The project combines a backend made with Java in Spring Boot and a frontend made with REACT 
-generated through ChatGPT, persisting in a database in MYSQL, creating a nostalgic experience that reflects the dynamics of a "tamagotchi", but with the charisma and the Pokémon universe.
+generated through ChatGPT, persisting in a database in MYSQL, creating a nostalgic experience that reflects the dynamics of a "tamagotchi", but with the charisma of the Pokémon universe.
 
 ## ![Egg](https://raw.githubusercontent.com/msikma/pokesprite/master/items-outline/key-item/mystery-egg.png) Main functionalities
 
