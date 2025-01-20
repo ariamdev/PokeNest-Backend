@@ -20,21 +20,39 @@ de un tamagotchi, pero con el carisma y el universo de Pokémon.
 **Autenticación y gestión de usuarios**:
 - Middleware de autorización con JWT: Crea una cuenta de usuario con roles de USUARIO o ADMIN implementando autenticación segura para acceder a los diferentes endpoints según el rol.
 
+![Login](https://github.com/user-attachments/assets/290e10a0-e5e7-4e8f-ad3e-2c2a3ed5a6f9)
+
+  <sub>* *Pagina de Login y registro.*</sub>
+
 **API RESTful**:
-- Creación de mascota: Elige tu Pokémon entre varias opciones, uno de los tres iniciales de la primera generación o Eevee y sus evoluciones.
-- Atributos de las mascotas: Cada pokémon tiene 3 barras de status que se verán afectadas según las interacciones que realice el usuario:
+
+- **Creación de mascota:** Elige tu Pokémon entre varias opciones, uno de los tres iniciales de la primera generación o Eevee y sus evoluciones.
+
+
+![Create](https://github.com/user-attachments/assets/414907d0-42b0-47f0-a1ee-50c09fc269c0)
+
+<sub>* *Menú User y creación de mascota.*</sub>
+  
+- **Atributos de las mascotas:** Cada pokémon tiene 3 barras de status que se verán afectadas según las interacciones que realice el usuario:
     - PH: Vida del pokémon.
     - EX: Experiencia necesaria para subir de nivel.
     - Felicidad: El grado de felicidad de cada pokémon.
-- Interacciones con las mascotas: Podrás realizar 5 interacciones con las mascotas:
+      
+- **Interacciones con las mascotas:** Podrás realizar 5 interacciones con las mascotas:
     - Alimentar: Recupera el PH.
     - Dormir: El pokémon descansa para recuperar PH y felicidad.
     - Jugar: Recupera felicidad.
     - Entrenar: Entrena tu pokémon para aumentar su experiencia y subir su nivel, incluso evolucionar.
     - Explorar: Explora el mundo para aumentar la experiencia.
     - Curar: Lleva tu pokémon a un centro pokémon para que recupere sus stats.
-- Sistema de Evoluciones: Los pokémons iniciales de la primera generación evolucionan al llevar al nivel adecuado, mientras que Eevee podrás evolucionarlo cuando quieras, sin embargo, una vez evolucionado sus evoluciones no podrán hacerlo.
-- Gestión: Decide si "Eliminas" tu mascota de tu equipo y déjalo en libertad.
+      
+- **Sistema de Evoluciones:** Los pokémons iniciales de la primera generación evolucionan al llevar al nivel adecuado, mientras que Eevee podrás evolucionarlo cuando quieras, sin embargo, una vez evolucionado sus evoluciones no podrán hacerlo.
+  
+- **Gestión:** Decide si "Eliminas" tu mascota de tu equipo y déjalo en libertad.
+
+![Interactions](https://github.com/user-attachments/assets/471c0691-7143-45fd-8eba-fea953ee82eb)
+
+<sub>* *Interacciones con la mascota.*</sub>
 
 **Base de datos relacional:**
 - Estructura optimizada para almacenar información de usuarios y sus Pokémon.
