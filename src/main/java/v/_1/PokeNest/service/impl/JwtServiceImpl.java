@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -12,11 +13,16 @@ import org.springframework.stereotype.Service;
 import v._1.PokeNest.model.User;
 import v._1.PokeNest.service.JwtService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Service
@@ -24,7 +30,19 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    private static final String SECRET_KEY="586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
+    @Value("${jwt.secret.file}")
+    private String secretFilePath;
+
+    private String SECRET_KEY;
+
+    @PostConstruct
+    private void loadSecretKey() {
+        try {
+            SECRET_KEY = new String(Files.readAllBytes(Paths.get(secretFilePath))).trim();
+        } catch (IOException e) {
+            throw new IllegalStateException("We couldn't find the file in the path: " + secretFilePath, e);
+        }
+    }
 
     @Override
     public String getToken(UserDetails user) {
@@ -33,15 +51,15 @@ public class JwtServiceImpl implements JwtService {
 
     private String generateToken(Map<String,Object> extraClaims, UserDetails user){
         if (user instanceof User) {
-            User appUser = (User) user; // Cast al modelo User
-            extraClaims.put("role", appUser.getRole().name()); // Incluye el rol como claim
+            User appUser = (User) user;
+            extraClaims.put("role", appUser.getRole().name());
         }
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+864_000_00)) //1 dia
+                .setExpiration(new Date(System.currentTimeMillis()+864_000_00))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

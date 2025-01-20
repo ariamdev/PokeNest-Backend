@@ -4,6 +4,7 @@ package v._1.PokeNest.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import v._1.PokeNest.dto.request.PetFindRequestDTO;
 import v._1.PokeNest.dto.request.PetRequestDTO;
@@ -24,34 +25,40 @@ public class PetController {
     private final PetUpdateService petUpdateService;
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PetResponseDTO> createPet(@RequestBody PetRequestDTO petRequestDTO) {
         PetResponseDTO petResponseDTO = petService.createPet(petRequestDTO);
         return new ResponseEntity<>(petResponseDTO, HttpStatus.CREATED);
     }
 
    @DeleteMapping("/delete")
+   @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Void> deletePet(@RequestBody PetFindRequestDTO petFindRequestDTO){
         petService.deletePet(petFindRequestDTO);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getOne/{id}")
+    @GetMapping("/poke/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PetResponseDTO> getOnePet(@PathVariable int id) {
         PetResponseDTO petResponseDTO = petService.getOnePet(id);
         return new ResponseEntity<>(petResponseDTO,HttpStatus.OK);
     }
 
     @GetMapping("/getUserPoke")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<PetResponseDTO>> getUserPets() {
         return ResponseEntity.ok(petService.getUserPets());
     }
 
     @GetMapping("/admin/getAll")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PetAndUserResponseDTO>> getAllPets() {
         return ResponseEntity.ok(petService.getAllPets());
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PetResponseDTO> updatePet(@RequestBody PetFindRequestDTO petFindRequestDTO,
                                                     @RequestParam PetInteraction petInteraction){
         PetResponseDTO petResponseDTO = petUpdateService.updatePet(petFindRequestDTO, petInteraction);
@@ -59,6 +66,7 @@ public class PetController {
     }
 
     @PostMapping("/update/eev")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PetResponseDTO> evolveEevee(
             @RequestBody PetFindRequestDTO petFindRequestDTO,
             @RequestParam String targetSpecies) {
