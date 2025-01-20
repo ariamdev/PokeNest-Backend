@@ -19,21 +19,40 @@ generated through ChatGPT, persisting in a database in MYSQL, creating a nostalg
 **Authentication and user management:**
 - Authorization middleware with JWT: Create a user account with USER or ADMIN roles implementing secure authentication to access different endpoints depending on the role.
 
+![Login](https://github.com/user-attachments/assets/290e10a0-e5e7-4e8f-ad3e-2c2a3ed5a6f9)
+
+<sub>* *Login and Register page.*</sub>
+
+
 **API RESTful:**
-- Pet creation: Choose your Pokémon from several options, one of the three first generation starters or Eevee and its evolutions.
-- Pet Attributes: Each pokémon has 3 status bars that will be affected according to the interactions made by the user:
+- **Pet creation:** Choose your Pokémon from several options, one of the three first generation starters or Eevee and its evolutions.
+  
+
+![Create](https://github.com/user-attachments/assets/414907d0-42b0-47f0-a1ee-50c09fc269c0)
+
+<sub>* *User Menu and pet creation demostration.*</sub>
+
+
+- **Pet Attributes:** Each pokémon has 3 status bars that will be affected according to the interactions made by the user:
     - PH: Life of the pokémon.
     - EX: Experience needed to level up.
     - Happiness: The degree of happiness of each pokémon.
-- Interactions with pets: You will be able to perform 5 interactions with pets:
+      
+- **Interactions with pets:** You will be able to perform 5 interactions with pets:
     - Feed: Recover PH.
     - Sleep: The pokémon rests to recover PH and happiness.
     - Play: Recover happiness.
     - Train: Train your pokémon to increase its experience and level up, even evolve.
     - Explore: Explore the world to increase experience.
     - Heal: Take your pokémon to a pokémon center to recover its stats.
-- Evolution System: The initial pokémons of the first generation evolve when you take them to the appropriate level, while Eevee you will be able to evolve it whenever you want, however, once evolved its evolutions will not be able to do it.
-- Management: Decide whether to “Remove” your pet from your team and release it.
+      
+- **Evolution System:** The initial pokémons of the first generation evolve when you take them to the appropriate level, while Eevee you will be able to evolve it whenever you want, however, once evolved its evolutions will not be able to do it.
+  
+- **Management:** Decide whether to “Remove” your pet from your team and release it.
+
+![Interactions](https://github.com/user-attachments/assets/471c0691-7143-45fd-8eba-fea953ee82eb)
+
+<sub>* *Interaction options.*</sub>
 
 **Relational database:**
 - Optimized structure to store information of users and their Pokémon.
