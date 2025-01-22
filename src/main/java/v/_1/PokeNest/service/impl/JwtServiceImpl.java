@@ -35,6 +35,9 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.token.access.expiration}")
     private long accessTokenExpiration;
 
+    @Value("${jwt.refresh.threshold}")
+    private long refreshThreshold;
+
     private String SECRET_KEY;
 
     @PostConstruct
@@ -94,6 +97,13 @@ public class JwtServiceImpl implements JwtService {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+
+    public boolean isTokenCloseToExpiry(String token) {
+        Date expiration = getExpiration(token);
+        long timeToExpiry = expiration.getTime() - System.currentTimeMillis();
+        return timeToExpiry <= refreshThreshold;
     }
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {

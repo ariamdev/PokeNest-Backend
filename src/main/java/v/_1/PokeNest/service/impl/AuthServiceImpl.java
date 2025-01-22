@@ -42,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
 
         return JwtAuthenticationResponse.builder()
                 .token(token)
-                .role(role) //Esto no lo necesitamos devolver, queremos que el front actue desencriptando el rol.
                 .build();
     }
 
