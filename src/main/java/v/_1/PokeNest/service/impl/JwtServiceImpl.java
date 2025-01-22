@@ -29,9 +29,11 @@ import org.springframework.beans.factory.annotation.Value;
 @Component
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
-
     @Value("${jwt.secret.file}")
     private String secretFilePath;
+
+    @Value("${jwt.token.access.expiration}")
+    private long accessTokenExpiration;
 
     private String SECRET_KEY;
 
@@ -46,10 +48,10 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String getToken(UserDetails user) {
-        return generateToken(new HashMap<>(),user);
+        return generateToken(new HashMap<>(), user, accessTokenExpiration);
     }
 
-    private String generateToken(Map<String,Object> extraClaims, UserDetails user){
+    private String generateToken(Map<String, Object> extraClaims, UserDetails user, long validity) {
         if (user instanceof User) {
             User appUser = (User) user;
             extraClaims.put("role", appUser.getRole().name());
@@ -59,27 +61,28 @@ public class JwtServiceImpl implements JwtService {
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+864_000_00))
+                .setExpiration(new Date(System.currentTimeMillis() + validity))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+
     private Key getKey() {
-        byte[] keyBytes= Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Extraer todas las Claims del JWT
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+    private Claims getAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
     @Override
     public String extractUserName(String token) {
-        return extractAllClaims(token).getSubject();
+        return getAllClaims(token).getSubject();
     }
 
     @Override
@@ -89,34 +92,22 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username=getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private Claims getAllClaims(String token)
-    {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public <T> T getClaim(String token, Function<Claims,T> claimsResolver)
-    {
-        final Claims claims=getAllClaims(token);
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    private Date getExpiration(String token)
-    {
+    private Date getExpiration(String token) {
         return getClaim(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token)
-    {
+    private boolean isTokenExpired(String token) {
         return getExpiration(token).before(new Date());
     }
-
 }
+
+

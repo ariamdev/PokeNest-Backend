@@ -20,8 +20,7 @@ import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import v._1.PokeNest.service.impl.JwtServiceImpl;
 
-//Se ejecutará un filtro solo una vez por cada solicitud HTTP
-//MODIFICAR CLASE PARA OBTENER TEMA DE ROLES Y AUTHORIZACIONES!
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

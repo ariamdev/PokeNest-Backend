@@ -8,4 +8,5 @@ public interface JwtService {
     String getToken(UserDetails user);
     boolean isTokenValid(String token, UserDetails userDetails);
     String extractUserName(String token);
+
 }

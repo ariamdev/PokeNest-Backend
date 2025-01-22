@@ -36,13 +36,13 @@ public class AuthServiceImpl implements AuthService {
 
         String role = "";
         if (user instanceof User) {
-            User appUser = (User) user; // Cast al modelo User
-            role = appUser.getRole().name(); // Extraer el rol
+            User appUser = (User) user;
+            role = appUser.getRole().name();
         }
 
         return JwtAuthenticationResponse.builder()
                 .token(token)
-                .role(role)
+                .role(role) //Esto no lo necesitamos devolver, queremos que el front actue desencriptando el rol.
                 .build();
     }
 
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .role(Role.USER)
-                .pets(new ArrayList<>()) //Inicializa lista de pets
+                .pets(new ArrayList<>())
                 .build();
 
         userRepository.save(user);
