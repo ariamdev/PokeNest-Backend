@@ -70,6 +70,60 @@ de un tamagotchi, pero con el carisma y el universo de Pokémon.
 - Node.js
 - MySQL
 
-## ![Trs](https://raw.githubusercontent.com/msikma/pokesprite/master/items-outline/tr/fire.png) Contribución
+## ![Trs](https://raw.githubusercontent.com/msikma/pokesprite/master/items-outline/tr/fire.png) Configuración & Contribución
 
-Si quieres contribuir al proyecto, abre un issue o envía un pull request. Cualquier aporte que ayude a mejorar el codigo o escalabilidad del backend será bienvenido!
+1. Haz un `Fork` del repositorio.
+
+
+2. Clona el repositorio en local.
+
+   ```bash
+   git clone https://github.com/<USERNAME>/PokeNest-Backend.git
+    ```
+
+3. Navega al directorio del proyecto.
+
+    ```bash
+    cd PokeNest
+    ```
+4. Abre el proyecto
+- En IntelliJ IDEA, haz clic en Archivo → Abrir y selecciona la carpeta del proyecto.
+  El proyecto utiliza Maven (pom.xml), IDEA lo detectará y te pedirá que lo importes.
+- Verifica el SDK de Java:
+  Ve a Archivo → Estructura del proyecto → SDK del proyecto.
+  Asegúrate de que está configurado con la versión correcta de Java, yo he utilizado **Java 21**.
+
+5. Actualiza las dependencias:
+
+El proyecto utiliza Maven, abre una terminal y ejecuta:
+```bash
+mvn clean install
+ ```
+
+6. Configura la base de datos de MySQL:
+- Encontrarás el esquema sql en la carpeta resources → [BBD.sql](src%2Fmain%2Fresources%2FBBD.sql).
+- No olvides configurar el `application.properties` con tu configuración de MySQL:
+```bash
+spring.datasource.url=jdbc:mysql: [//localhost:3306/pokeapi]
+spring.datasource.username= [YOURUSERNAME]
+spring.datasource.password= [YOURPASSWORD]
+```
+
+7. Configurar el `jwt-secret.txt`.
+
+Para generar el JWT en el Servicio Jwt el código necesita leer el fichero «jwt-secret.txt» situado
+en la carpeta resources. Por favor, rellénalo con tu clave secreta.
+> :bangbang: **IMPORTANTE:** **nunca** compartas el contenido de este archivo para no comprometer la seguridad de la API. 
+
+8. `Ejecutar` la API:
+
+Ya tienes todo listo para ejecutar la API. 
+```bash
+mvn spring-boot:run
+```
+
+9. Para contribuir:
+
+Haz una `Pull Request` con una descripción de tus cambios o añadidos.
+
+Cualquier contribución que ayude a mejorar el código o la escalabilidad del proyecto será bienvenido!
