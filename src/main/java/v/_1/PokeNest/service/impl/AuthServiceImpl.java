@@ -34,12 +34,6 @@ public class AuthServiceImpl implements AuthService {
         UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UserNotFoundException("User not found"));
         String token= jwtServiceImpl.getToken(user);
 
-        String role = "";
-        if (user instanceof User) {
-            User appUser = (User) user;
-            role = appUser.getRole().name();
-        }
-
         return JwtAuthenticationResponse.builder()
                 .token(token)
                 .build();

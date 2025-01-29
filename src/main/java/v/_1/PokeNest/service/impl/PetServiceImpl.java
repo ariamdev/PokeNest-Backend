@@ -1,6 +1,9 @@
 package v._1.PokeNest.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import v._1.PokeNest.dto.request.PetFindRequestDTO;
@@ -22,8 +25,7 @@ import v._1.PokeNest.repository.TypeRepository;
 import v._1.PokeNest.repository.UserRepository;
 import v._1.PokeNest.service.PetService;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,53 +121,51 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetResponseDTO> getUserPets() {
+    public Page<PetResponseDTO> getUserPets(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
 
-        List<Pet> pets = user.getPets();
+        Page<Pet> petsPage = petRepository.findByUser(user, pageable);
 
-        if (pets.isEmpty()) {
+        if (petsPage.isEmpty()) {
             throw new PetNotFoundException("No pets found for user: " + username);
         }
 
-        //Si no funciona probar solo con user.getPets();
-        return user.getPets().stream().map(this::buildPetResponseDTO)
-                .collect(Collectors.toList());
+        return petsPage.map(this::buildPetResponseDTO);
     }
 
 
     @Override
-    public List<PetAndUserResponseDTO> getAllPets() {
+    public Page<PetAndUserResponseDTO> getAllPets(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!isAdmin(username)) {
             throw new SecurityException("Unauthorized to access all pets.");
         }
 
-        List<Pet> pets = petRepository.findAll();
+        Page<Pet> petsPage = petRepository.findAll(pageable);
 
-        if (pets.isEmpty()) {
+        if (petsPage.isEmpty()) {
             throw new PetNotFoundException("No pets found in the system.");
         }
 
-        return petRepository.findAll().stream()
-                .map(pet -> PetAndUserResponseDTO.builder()
-                        .userId(pet.getUser().getId())
-                        .username(pet.getUser().getUsername())
-                        .id(pet.getId())
-                        .alias(pet.getAlias())
-                        .species(pet.getSpecies().getSpecieName())
-                        .types(pet.getTypes().stream().map(Type::getName).collect(Collectors.toSet()))
-                        .lvl(pet.getLvl())
-                        .experience(pet.getExperience())
-                        .happiness(pet.getHappiness())
-                        .ph(pet.getPh())
-                        .location(pet.getLocation().name())
+        List<PetAndUserResponseDTO> petAndUserResponseList = petsPage.getContent().stream()
+                .collect(Collectors.groupingBy(Pet::getUser))
+                .entrySet()
+                .stream()
+                .map(entry -> PetAndUserResponseDTO.builder()
+                        .userId(entry.getKey().getId())
+                        .username(entry.getKey().getUsername())
+                        .pets(entry.getValue().stream()
+                                .map(this::buildPetResponseDTO)
+                                .collect(Collectors.toList()))
                         .build())
+                .sorted(Comparator.comparing(PetAndUserResponseDTO::getUserId))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(petAndUserResponseList, pageable, petsPage.getTotalElements());
     }
 
     private Pet verifyOwner(int id) {

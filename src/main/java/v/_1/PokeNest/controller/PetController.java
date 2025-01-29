@@ -2,6 +2,10 @@ package v._1.PokeNest.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,14 +51,18 @@ public class PetController {
 
     @GetMapping("/getUserPoke")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<PetResponseDTO>> getUserPets() {
-        return ResponseEntity.ok(petService.getUserPets());
+    public ResponseEntity<Page<PetResponseDTO>> getUserPets(
+            @PageableDefault(page = 0, size = 5, sort = "alias", direction = Sort.Direction.ASC) Pageable pageable)
+    {
+        return ResponseEntity.ok(petService.getUserPets(pageable));
     }
 
     @GetMapping("/admin/getAll")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PetAndUserResponseDTO>> getAllPets() {
-        return ResponseEntity.ok(petService.getAllPets());
+    public ResponseEntity<Page<PetAndUserResponseDTO>> getAllPets(
+            @PageableDefault(page= 0, size = 10, sort = "user.id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(petService.getAllPets(pageable));
     }
 
     @PostMapping("/update")

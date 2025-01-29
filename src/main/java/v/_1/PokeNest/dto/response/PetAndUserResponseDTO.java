@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,13 +15,5 @@ import java.util.Set;
 public class PetAndUserResponseDTO {
     private int userId;
     private String username;
-    private int id;
-    private String alias;
-    private String species;
-    private Set<String> types;
-    private int lvl;
-    private int experience;
-    private int happiness;
-    private int ph;
-    private String location;
+    private List<PetResponseDTO> pets;
 }
