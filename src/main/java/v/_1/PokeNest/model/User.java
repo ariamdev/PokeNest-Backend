@@ -86,4 +86,8 @@ public class User implements UserDetails {
         return true;
 
     }
+
+    public boolean hasPetWithAlias(String alias) {
+        return this.pets.stream().anyMatch(p -> p.getAlias().equalsIgnoreCase(alias));
+    }
 }

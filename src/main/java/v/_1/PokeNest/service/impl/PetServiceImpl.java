@@ -51,7 +51,7 @@ public class PetServiceImpl implements PetService {
                         .orElseThrow(() -> new IllegalArgumentException("Type not found: " + typeName)))
                 .collect(Collectors.toSet());
 
-        if (user.getPets().stream().anyMatch(p -> p.getAlias().equalsIgnoreCase(petRequestDTO.getAlias()))) {
+        if (user.hasPetWithAlias(petRequestDTO.getAlias())) {
             throw new PetNameExistException("The alias '" + petRequestDTO.getAlias() + "' is already in use.");
         }
 
@@ -68,14 +68,14 @@ public class PetServiceImpl implements PetService {
     @Override
     public void deletePet(PetFindRequestDTO petFindRequestDTO) {
         Pet pet = getPetById(petFindRequestDTO.getId());
-        verifyPetOwnership(pet);
+        pet.verifyOwnership(authService.getAuthenticatedUser(), authService);
         petRepository.delete(pet);
     }
 
     @Override
     public PetResponseDTO getOnePet(int id) {
         Pet pet = getPetById(id);
-        verifyPetOwnership(pet);
+        pet.verifyOwnership(authService.getAuthenticatedUser(), authService);
         return petMapper.toDTO(pet);
     }
 
@@ -100,13 +100,5 @@ public class PetServiceImpl implements PetService {
         return petRepository.findById(id)
                 .orElseThrow(() -> new PetNotFoundException("Pet not found with ID: " + id));
     }
-
-    private void verifyPetOwnership(Pet pet) {
-        User user = authService.getAuthenticatedUser();
-        if (!authService.isAdmin(user) && !pet.getUser().equals(user)) {
-            throw new SecurityException("Unauthorized to access this pet.");
-        }
-    }
-
 
 }

@@ -1,0 +1,20 @@
+{
+  "Bulbasaur": "FOREST",
+  "Ivysaur": "FOREST",
+  "Venusaur": "FOREST",
+  "Charmander": "CAVE",
+  "Charmeleon": "CAVE",
+  "Charizard": "CAVE",
+  "Squirtle": "LAKE",
+  "Wartortle": "LAKE",
+  "Blastoise": "LAKE",
+  "Eevee": "FOREST",
+  "Vaporeon": "BEACH",
+  "Jolteon": "CAVE",
+  "Flareon": "CAVE",
+  "Espeon": "FOREST",
+  "Umbreon": "CAVE",
+  "Leafeon": "FOREST",
+  "Glaceon": "SNOW",
+  "Sylveon": "FOREST"
+}

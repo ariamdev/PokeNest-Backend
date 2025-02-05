@@ -1,0 +1,20 @@
+{
+  "Bulbasaur": ["Planta", "Veneno"],
+  "Ivysaur": ["Planta", "Veneno"],
+  "Venusaur": ["Planta", "Veneno"],
+  "Charmander": ["Fuego"],
+  "Charmeleon": ["Fuego"],
+  "Charizard": ["Fuego", "Volador"],
+  "Squirtle": ["Agua"],
+  "Wartortle": ["Agua"],
+  "Blastoise": ["Agua"],
+  "Eevee": ["Normal"],
+  "Vaporeon": ["Agua"],
+  "Jolteon": ["Eléctrico"],
+  "Flareon": ["Fuego"],
+  "Espeon": ["Psíquico"],
+  "Umbreon": ["Siniestro"],
+  "Leafeon": ["Planta"],
+  "Glaceon": ["Hielo"],
+  "Sylveon": ["Hada"]
+}

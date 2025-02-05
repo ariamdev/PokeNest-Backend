@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import v._1.PokeNest.model.enums.Location;
+import v._1.PokeNest.service.AuthService;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -61,5 +62,11 @@ public class Pet {
 
     @Column(name = "sleep_end_time")
     private LocalDateTime sleepEndTime;
+
+    public void verifyOwnership(User user, AuthService authService) {
+        if (!authService.isAdmin(user) && !this.user.equals(user)) {
+            throw new SecurityException("Unauthorized to access this pet.");
+        }
+    }
 
 }
