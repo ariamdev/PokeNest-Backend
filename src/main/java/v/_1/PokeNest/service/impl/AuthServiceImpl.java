@@ -3,6 +3,7 @@ package v._1.PokeNest.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,17 @@ public class AuthServiceImpl implements AuthService {
         return JwtAuthenticationResponse.builder()
                 .token(jwtServiceImpl.getToken(user))
                 .build();
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+    }
+
+    @Override
+    public boolean isAdmin(User user) {
+        return user.getRole() == Role.ADMIN;
     }
 }
