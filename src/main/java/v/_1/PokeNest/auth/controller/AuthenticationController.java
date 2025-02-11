@@ -1,5 +1,6 @@
 package v._1.PokeNest.auth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,12 @@ public class AuthenticationController {
     private final AuthServiceImpl authServiceImpl;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody @Valid LoginRequest request){
         return ResponseEntity.ok(authServiceImpl.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody @Valid RegisterRequest request){
         return ResponseEntity.ok(authServiceImpl.register(request));
     }
 }
