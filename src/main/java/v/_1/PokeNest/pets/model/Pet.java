@@ -69,4 +69,40 @@ public class Pet {
         }
     }
 
+    public void verifyPetState(Pet pet) {
+        if (pet.getPh() <= 40) {
+            pet.setHappiness(40);
+        }
+    }
+
+    public void healPet(Pet pet) {
+        pet.setPh(100);
+        pet.setHappiness(100);
+    }
+
+    public void startSleep(Pet pet) {
+        healPet(pet);
+    }
+
+    public void feedPet(Pet pet) {
+        pet.setPh(Math.min(pet.getPh() + 25, 100));
+        pet.setHappiness(Math.min(pet.getHappiness() + 20, 100));
+    }
+
+    public void playWithPet(Pet pet) {
+        pet.setHappiness(Math.min(pet.getHappiness() + 30, 100));
+    }
+
+    public void trainPet(Pet pet) {
+        pet.setPh(Math.max(pet.getPh() - 25, 0));
+        pet.setExperience(Math.min(pet.getExperience() + 25, 100));
+        pet.setHappiness(Math.max(pet.getPh() - 10, 0));
+    }
+
+    public void exploreWithPet(Pet pet) {
+        pet.setPh(Math.max(pet.getPh() - 10, 0));
+        pet.setExperience(Math.min(pet.getExperience() + 10, 100));
+    }
+
+
 }
